@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>字节跳动</title>
+</head>
+
+<body>
+
+    <script>
+        /*
+    3
+    5 0
+    6 0
+    7 0
+    59
+    6 59
+    
+    6 0
+    read
+    */
+
+        // while (line = readline()) {
+        //     var lines = line.split(" ");
+        //     var a = parseInt(lines[0]);
+        //     var b = parseInt(lines[1]);
+        //     print(a + b);
+        // }
+        // var n = parseInt(readline());
+        // var ans = 0;
+        // for (var i = 0; i < n; i++) {
+        //     lines = readline().split(" ")
+        //     for (var j = 0; j < lines.length; j++) {
+        //         ans += parseInt(lines[j]);
+        //     }
+        // }
+        // print(ans);
+
+        // function main() {
+        //     var n = parseInt(readline());
+        //     var clocks = [];
+        //     for(let i = 0; i < n; i++) {
+        //         var clock = readline().split(' ');
+        //         // var Hi = clock[0],
+        //         //     Mi = clock[1];
+        //         clocks.push(clock)
+        //     }
+        //     var x = parseInt(readline());
+        //     var timesup = readline().split(' ');
+        //     var tA = parseInt(timesup[0]);
+        //     var tB = parseInt(timesup[1]);
+        //     var ntA = tA;
+        //     var ntB = tB - x;
+        //     while(ntB < 0){
+        //         ntA--;
+        //         ntB += 60;
+        //         if(ntA < 0){
+        //             ntA += 24;
+        //         }
+        //     }
+        //     var index = -1;
+        //     var de = -1;
+        //     var finalT = ntA * 60 + ntB
+        //     for(let i = 0; i < n; i++) {
+        //         var t = parseInt(clocks[i][0]) * 60 + parseInt(clocks[i][1]);
+        //         if(finalT >= t && de == -1){
+        //             de = t;
+        //             // index = i;
+        //         }
+        //         if(finalT >= t && t >= de){
+        //             de = t;
+        //             index = i;
+        //         }
+
+        //     }
+        //     print(parseInt(clocks[index][0]) + ' ' + parseInt(clocks[index][1]))
+        // }
+        // main()
+        5
+
+        // var n = parseInt(readline());
+        // var peopleArr = readline().split(' ');
+
+        // for(let i = 0; i < n; i++){
+        //     resultArr[i] = 100;
+        // }
+        // for(let i = 1; i < n; i++){
+        //     if(peopleArr[i] = peopleArr[i - 1]){
+        //         resultArr[i] = resultArr[i - 1];
+        //     }else if(peopleArr[i] > peopleArr[i - 1] && resultArr[i] < resultArr[i - 1] + 100) {
+        //         resultArr[i] = resultArr[i - 1] + 100;
+        //     }else if(peopleArr[i] < peopleArr[i - 1]&& resultArr[i] > resultArr[1 - 1] - 100){
+        //         resultArr[i - 1] = resultArr[i - 1] + 100;
+        //         if (i > 1) {
+        //             i -= 2;
+        //         }
+        //     }
+        // }
+        var peopleArr2 = [9, 6, 3] // 300 200 100 = 600
+        var peopleArr1 = [1, 4, 5, 9, 3, 2]
+        //   100 200 300 400 200 100 = 1300
+        var peopleArr3 = [1, 5, 4, 2, 3, 1] // 100, 300, 200, 100, 200, 100 = 1000
+        var peopleArr4 = [1, 2, 3, 4, 5, 3, 2, 1] // 100, 200, 300, 400, 500, 300, 200, 100 => 2100
+        function calcBonus(peopleArr) {
+            var result = 1;
+            var n = peopleArr.length;
+            var curMax = 1;
+            var count = 0;
+            for(let i = 1; i < n; i++) {
+                if(peopleArr[i] >= peopleArr[i - 1]){
+                    if(count){
+                        accCount();
+                    }
+                    curMax = peopleArr[i] == peopleArr[i - 1] ? 1 : curMax + 1
+                    result += curMax
+                }else {
+                    ++count
+                }
+            }
+            if(count) {
+                accCount();
+            }
+            function accCount() {
+                result += count * (count + 1) / 2;
+                if(count >= curMax){
+                            result += count - curMax + 1;
+                            count = 0;
+                            curMax = 1;
+                        }
+            }
+            return result * 100;
+        }
+        console.log(calcBonus(peopleArr3))
+        // for(let i = n - 2; i > 0; i--){
+        //     if(peopleArr[i] > peopleArr[i + 1] && resultArr[i] < resultArr[i+1]){
+        //         resultArr[i] = resultArr[i + 1] + 100;
+        //     }
+        // }
+    </script>
+</body>
+
+</html>
