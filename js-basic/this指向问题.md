@@ -27,9 +27,19 @@ Array.prototype.method = function() {
     for(var i in arr){
         console.log(arr[i])
     }
+
+/*
+	输出结果：
+	1
+	2
+	3
+	1
+	2
+	3
+	cyj
+	f () {
+		console.lof(this.length)
+	}
+*/
 ```
-
-输出结果如下图：
-
-![image-20190812004655951](http://ww1.sinaimg.cn/large/006tNc79gy1g5w7xr2tobj30im0bsjrq.jpg)
 
