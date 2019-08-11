@@ -6,5 +6,5 @@
 
 
 
-##[JS基础](./js-basic)
+## [JS基础](./js-basic)
 
