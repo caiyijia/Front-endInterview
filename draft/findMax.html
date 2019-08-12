@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>一次循环找数组最大值问题</title>
+</head>
+
+<body>
+
+
+    <script>
+        // 随机生成长度为n的数组
+        function prodArr(n) {
+            let arr = [];
+            for (let i = 0; i < n; i++) {
+                arr.push(Math.round(Math.random() * 100))
+            }
+            return arr
+        }
+        let newArr = prodArr(10)
+        console.log(newArr)
+        // 一次循环找最大和最小值
+        function findMaxMin(arr) {
+            let len = arr.length;
+            let max = arr[0];
+            let min = arr[0];
+            for(let i = 0; i < len; i++){
+                if(max < arr[i]){
+                    max = arr[i]
+                }
+                if(min > arr[i]){
+                    min = arr[i]
+                }
+            }
+            return 'Max: ' + max + '\n' + 'Min: ' + min
+        }
+        console.log(findMaxMin(newArr))
+
+        // 一次循环找冠亚季军
+        function findTop3(arr) {
+            let len = arr.length;
+            let top1 = arr[0];
+            let top2 = arr[0];
+            let top3 = arr[0];
+            for(let i = 0; i < len; i++) {
+                if(top1 < arr[i]){
+                    top3 = top2;
+                    top2 = top1;
+                    top1 = arr[i]
+                } else if(top2 < arr[i]){
+                    top3 = top2;
+                    top2 = arr[i];
+                }else if(top3 < arr[i]){
+                    top3 = arr[i]
+                }
+            }
+            return 'Top3: ' + top1 + ' ' + top2 + ' ' + top3
+        }
+        console.log(findTop3(newArr))
+    </script>
+</body>
+
+</html>
