@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        /* 
+            用与存储单行表格数据的一行文本
+            1. 用于分隔不同字段的逗号前后一定没空格
+            2. 除数字、字母以及特殊字符外，不会出现其它字符
+            3. 输入的数字一定是10进制合法正整数，不会出现负数、小数、进制数以及格式错误的十进制数。
+
+            测试用例：
+            输入： a,,1,"b,"""
+            输出：a
+                --
+                1
+                b,"
+        */
+
+        let str = 'a,,1,"b,"""'
+        
+        function test(str) {
+            // (?<!y)x
+            let expReg = /(?<!\").(?=\,)|(?<=\").+(?=")/g
+            let strArr = str.match(expReg)
+            let len = strArr.length;
+            console.log(len)
+            for(let i = 0; i < len; i++){
+                if(strArr[i] === ','){
+                    strArr[i] = '--'
+                }
+                if(strArr[i].includes('"')){
+                    strArr[i] = strArr[i].replace(/(\"){2}/g, '$1')
+                }
+                console.log(strArr[i])
+            }
+            return strArr
+        }
+
+        console.log(test(str))
+    </script>
+</body>
+</html>
