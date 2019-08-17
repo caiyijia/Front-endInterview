@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>一些不太熟的html标签</title>
+</head>
+
+<body>
+    <div>
+        <!-- <table>是<tr>的上层标签
+    <tr>必须在一个<table></table>里面,它不能单独使用,相当于<table>的属性标签. 
+    <table>标示一个表格,<tr>标示这个表格中间的一个行 
+    <td>标示行中的一个列,需要嵌套在<tr></tr>中间
+        <th>...</th> 定义表头单元格。表格中的文字将以粗体显示（<TH>与<TD>同样是标示一个储存格,唯一不同的是<TH>所标示的储存格中的文字是以粗体出现
+    -->
+        <table>
+            <caption>some title</caption>
+            <tbody>
+                <tr>
+                    <th>some text</th>
+                    <td>some text</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <button>
+            <a href="https://baidu.com">some text</a>
+        </button>
+        <p>
+            <a href="https://baidu.com">
+                <p>some text</p>
+            </a>
+        </p>
+    </div>
+    <div>
+        <!-- <dl>、<dt>、<dd>这三个html标记是一个组合，它们很很像<ul><li>这个标签组合，但<dl>、<dt>、<dd>通常是用来描述一些术语定义，比如附录里的词汇表，或用来显示key-value这样成对的键和值。
+
+        <dl>、<dt>、<dd>通常被称为定义性列表. -->
+        <dl>
+            <dt>
+                <h1>some title</h1>
+            </dt>
+            <dd>
+                <p>some text</p>
+                <p>some text</p>
+            </dd>
+        </dl>
+    </div>
+</body>
+
+</html>
