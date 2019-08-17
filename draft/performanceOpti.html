@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>性能优化</title>
+</head>
+
+<body>
+    <ul>
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+    </ul>
+    <div></div>
+    <h1><a name="header-n121" class="md-header-anchor md-print-anchor" href="af://n121"> </a><span>性能优化</span></h1>
+    <h2><a name="header-n122" class="md-header-anchor md-print-anchor" href="af://n122"> </a><span>页面级别的优化</span></h2>
+    <ol>
+        <li><span>CSS Sprites</span></li>
+
+    </ol>
+    <ol start='2'>
+        <li><span>使用CDN（内容分发网络）</span></li>
+
+    </ol>
+    <ol start='3'>
+        <li><span>压缩合并代码</span></li>
+
+    </ol>
+    <ol start='4'>
+        <li><span>使用DNS预解析</span></li>
+
+    </ol>
+    <p>&nbsp;</p>
+    <h1 data-breakpage><a name="header-n136" class="md-header-anchor md-print-anchor" href="af://n136">
+        </a><span>代码级别的优化</span></h1>
+    <ol>
+        <li><span>减少DOM操作</span></li>
+
+    </ol>
+    <ol start='2'>
+        <li><span>异步加载</span></li>
+        <span>
+            defer <br>
+            1. 解析html<br>
+            2. 遇到带defer属性的script标签，继续解析html，同时下载script引入的文件<br>
+            3. 浏览器完成解析HTML，然后执行下载的脚本（按书写顺序执行）<br>
+
+
+            async<br>
+            1. 解析html<br>
+            2. 遇到带async属性的script标签。继续解析html，同时下载script引入的文件<br>
+            3. js文件下载完毕，浏览器暂停解析html，开始执行js<br>
+            4. js执行完毕，浏览器接着解析html</span>
+
+    </ol>
+    <ol start='3'>
+        <li><span>事件代理</span></li>
+
+    </ol>
+    <ol start='4'>
+        <li><span>使用requestAnimationFrame来替代setTimeout和setInerval</span></li>
+
+    </ol>
+    <ol start='5'>
+        <li><span>图片懒加载</span></li>
+
+    </ol>
+
+    <div id="box" style="height: 100px; width: 100px; background-color: brown;"></div>
+
+    <script>
+        // 事件代理
+        var lis = document.querySelectorAll('li');
+        var len = lis.length;
+        var ul = document.querySelector('ul');
+
+        /* for(var i=0;i<len;i++){
+            lis[i].onclick=function(){
+
+            }
+        } */
+
+        ul.onclick = function (ev) {
+            //console.log(ev.target.tagName);
+
+            if (ev.target.tagName.toLowerCase() == 'li') {
+                console.log(ev.target.innerHTML)
+            }
+        }
+
+        var div = document.querySelectorAll('div')[0];
+
+        // div.innerHTML += "a";
+        console.time('adam');
+        for (var i = 0; i < 5000; i++) {
+            div.innerHTML += 'a';
+        }
+        console.timeEnd('adam'); //adam: 131.510986328125ms
+
+        console.time('eva');
+        var str = '';
+        for (var i = 0; i < 5000; i++) {
+            str += 'a';
+        }
+        div.innerHTML += str;
+        console.timeEnd('eva'); //eva: 0.52685546875ms
+
+
+        var box = document.getElementById('box');
+        var timer = requestAnimationFrame(function fn() {
+            box.style.width = box.offsetWidth + 5 + 'px';
+            box.innerHTML = box.offsetWidth / 5 + '%';
+            timer = requestAnimationFrame(fn);
+
+            if (box.offsetWidth >= 500) {
+                cancelAnimationFrame(timer);
+            }
+        });
+
+        // requestAnimationFrame兼容写法
+        (function () {
+            var lastTime = 0;
+            var version = ['webkit', 'moz'];
+            for (var i = 0; i < version.length && !window.requestAnimationFrame; i++) {
+                //如果此浏览器不支持requestAnimationFrame方法，就循环遍历version数组
+                window.requestAnimationFrame = window[version[i] + 'RequestAnimationFrame'];
+                window.cancelAnimationFrame = window[version[i] + 'CancelAnimationFrame'] ||
+                    // 有一些Webkit版本中，此方法的名字改变了
+                    window[version[i] + 'CancelRequestAnimationFrame'];
+            }
+
+            if (!window.requestAnimationFrame) { //如果是IE9-浏览器
+                window.requestAnimationFrame = function (callback, element) {
+                    var currTime = new Date().getTime();
+                    var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+                    //timeToCall的值为0-16.7之间。
+
+                    var id = window.setTimeout(function () {
+                        callback(currTime + timeToCall);
+                    }, timeToCall);
+                    lastTime = currTime + timeToCall;
+                    return id;
+                };
+            }
+            if (!window.cancelAnimationFrame) {
+                window.cancelAnimationFrame = function (id) {
+                    clearTimeout(id);
+                };
+            }
+        })();
+
+        // 懒加载简要代码
+        function getTopValue(obj) {
+            var top = 0;
+
+            while (obj.offsetParet) {
+                top += obj.offsetTop;
+
+                obj = obj.offsetParet;
+            }
+        }
+    </script>
+</body>
+
+</html>
