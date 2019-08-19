@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>B站笔试</title>
+</head>
+
+<body>
+
+    <script>
+        var arr1 = [3, 10, 6]; //2
+        var arr2 = [3, 6, 9]; // 2
+        var arr3 = [8, 8, 8] //1
+        var arr4 = [3, 3, 3] //0
+
+        // 有bug 待修复
+        function isPerfect(A) {
+            let len = A.length
+            let sum = 0;
+            let usedBl = []
+            for(let i = 0; i < len; i++) {
+                if(i > 0 && A[i] === A[i - 1]){
+                    continue
+                }
+                usedBl[i] = true;
+                backtrack(A, usedBl, A[i], 1, sum);
+                usedBl[i] = false;
+            }
+            
+
+            return sum;
+        }
+        let isSquare = n => Number.isInteger(n ** 0.5);
+
+        function backtrack(A, usedBl, now, count, sum) {
+
+            if (count === A.length) {
+                sum += 1
+                return
+            }
+            for (let i = 0; i < A.length; i++) {
+                if (usedBl[i]) {
+                    continue
+                }
+                let flag = false;
+                for(let j = i - 1; j > 0; j --){
+                    if(!usedBl[j]){
+                        if(A[j] === A[i]) {
+                            flag = true;
+                        }
+                        break;
+                    }
+                }
+                if (flag){
+                    continue
+                }
+                if (isSquare(now + A[i+1])){
+                    ++count;
+                    usedBl[i] = true;
+                    backtrack(A, usedBl, A[i], count, sum);
+                    usedBl[i] = false;
+                }
+            }
+        }
+
+        console.log(isPerfect(arr1))
+
+        // function money(n, a, b, c, f0) {
+        //     function fn(n) {
+        //         if (n < 0) {
+        //             return 0;
+        //         } else if (n == 0) {
+        //             return f0
+        //         } else {
+        //             return a * fn(n - 1) + b * fn(n - 2) + c * fn(n - 3) + 2 * n ** 2 - n + 32767
+        //         }
+        //     }
+        //     fn(n)
+
+        // }
+
+        // console.log(money(10, 0, 0, 0, 100))
+    </script>
+</body>
+
+</html>
