@@ -69,8 +69,29 @@
             // 最后如果全部匹配，那么right的长度应为0
             return !right.length
         }
-
         console.log(valid(str, brakets))
+
+
+        const map = new Map([
+            ["(", ")"],
+            ["[", "]"],
+            ["{", "}"]
+        ])
+        function isValid(str) {
+            let r = [],
+                l = str.length;
+            for(let i = 0; i < l; ++i){
+                let st = str[i];
+                if(map.has(st)){
+                    r.push(map.get(st))
+                }else if(st != ' ' && st !== r.pop()){
+                    return false
+                }
+            }
+            return !r.length
+        }
+        console.log(isValid(str))
+
     </script>
 </body>
 
