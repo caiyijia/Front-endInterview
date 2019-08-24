@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            Input: a1 a2 a3
+                    b1 b2
+
+            Output: a1 b1,a1 b2,a2 b1,a2 b2,a3 b1,a3 b2
+        */
+        line1 = ['a1']
+        line2 = ['b1', 'b2']
+        line3 = ['c1', 'c2']
+        var genCartesian = function(line1, line2, line3){
+            let l1 = line1.length, l2 = line2.length, l3 = line3.length;
+            let l = l3 ? l1 * l2 * l3 : l1 * l2;
+            let newArr = [line1,line2,line3]
+            let counter = [0, 0, 0], counterIndex = newArr.length - 1
+            let result = ''
+            for(let i = 0; i < l; i++){
+                result += [line1[counter[0]], line2[counter[1]], line3[counter[2]]].join(' ') + ','
+
+                handle()
+            }
+
+            function handle() {
+                counter[counterIndex]++;
+                if(counter[counterIndex] >= newArr[counterIndex].length){
+                    counter[counterIndex] = 0;
+                    counterIndex--;
+                    if(counterIndex >= 0){
+                        handle();
+                    }
+                    counterIndex = newArr.length - 1;
+                }
+            }
+            return result;
+        }
+        
+        /*
+            实现一个函数sortBy(list, [col1, col2])，结果为list按照指定的cols优先级排序
+        */
+        list = [
+            {col1 : 1, col2 : 80},
+            {col1 : 2, col2 : 60},
+            {col1 : 1, col2 : 90},
+            {col1 : 3, col2 : 40},
+            {col1 : 1, col2 : 80},
+            {col1 : 2, col2 : 10},
+            {col1 : 1, col2 : 80},
+            {col1 : 3, col2 : 90},
+            {col1 : 1, col2 : 80},
+            {col1 : 2, col2 : 50},
+            {col1 : 3, col2 : 50},
+            {col1 : 1, col2 : 80},
+            
+        ]
+        /*
+        输出为：
+            list = [
+            {col1 : 1, col2 : 80},
+            {col1 : 1, col2 : 80},
+            {col1 : 1, col2 : 80},
+            {col1 : 1, col2 : 80},
+            {col1 : 1, col2 : 80},
+            {col1 : 1, col2 : 90},
+            {col1 : 2, col2 : 10},
+            {col1 : 2, col2 : 50},
+            {col1 : 2, col2 : 60},
+            {col1 : 3, col2 : 40},
+            {col1 : 3, col2 : 50},
+            {col1 : 3, col2 : 90},
+            
+        ]
+        */
+        function sortBy(list, cols){
+
+        }
+    </script>
+</body>
+</html>
