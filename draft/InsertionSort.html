@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>插入排序</title>
+</head>
+<body>
+    
+    <script>
+        var arr=[3,44,38,5,47,15,36,26,27,2,46,4,19,50,48];
+        function insertionSort(arr) {
+            if(Object.prototype.toString.call(arr) !== '[object Array]'){
+                throw new Error('argument should be an Array')
+            }
+            console.time('插入排序耗时：')
+            let l = arr.length;
+            for(let i = 0; i < l; i++){
+                let j = i - 1, key = arr[i];
+                while(j >= 0 && key < arr[j]){
+                    arr[j + 1] = arr[j]
+                    j--
+                }
+                arr[j + 1] = key
+            }
+            console.timeEnd('插入排序耗时：');
+            return arr
+        }
+        // console.log(insertionSort(arr))
+
+        // 利用二分查找优化算法
+
+        function binaryInsertionSort(arr) {
+            if(Object.prototype.toString.call(arr) !== '[object Array]'){
+                throw new TypeError('argument should be an Array')
+            }
+            console.time('二分插入排序耗时：')
+            let l = arr.length;
+            for(let i = 0; i < l; i++){
+                let left = 0, right = i - 1, key = arr[i]
+                while(left <= right){
+                    let middle = parseInt((left + right) / 2)
+                    if(key < arr[middle]){
+                        --right
+                    }else{
+                        ++left
+                    }
+                }
+                for(let j = i - 1; j >= left; j--){
+                    arr[j + 1] = arr[j]
+                }
+                arr[left] = key
+            }
+            console.timeEnd('二分插入排序耗时：');
+            return arr
+        }
+        console.log(binaryInsertionSort(arr))
+
+    </script>
+</body>
+</html>
