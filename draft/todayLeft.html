@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>当日倒计时</title>
+</head>
+
+<body>
+    <span id="clock"></span>
+    <script>
+        window.onload = function () {
+            countDown();
+
+            function addZero(i) {
+                return i < 10 ? "0" + i : i + "";
+            }
+
+            function countDown() {
+                var nowtime = new Date().getTime();
+                var endtime = new Date(new Date(new Date().toLocaleDateString()).getTime() + 86400 * 1000 -1);
+                var lefttime = parseInt((endtime - nowtime) / 1000);
+                
+                var h = parseInt(lefttime / (60 * 60) % 24);
+                var m = parseInt(lefttime / 60 % 60);
+                var s = parseInt(lefttime % 60);
+                h = addZero(h);
+                m = addZero(m);
+                s = addZero(s);
+                document.querySelector("#clock").innerHTML = `今天还有 ${h} 时 ${m} 分 ${s} 秒`;
+                if (lefttime <= 0) {
+                    document.querySelector("#clock").innerHTML = "又是一天结束了";
+                    return;
+                }
+                setTimeout(countDown, 1000);
+            }
+        }
+    </script>
+</body>
+
+</html>
