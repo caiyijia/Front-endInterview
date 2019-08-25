@@ -65,11 +65,11 @@
                         return false
                     }
             }
-            console.log(right)
+            // console.log(right)
             // 最后如果全部匹配，那么right的长度应为0
             return !right.length
         }
-        console.log(valid(str, brakets))
+        // console.log(valid(str, brakets))
 
 
         const map = new Map([
@@ -90,8 +90,23 @@
             }
             return !r.length
         }
-        console.log(isValid(str))
+        // console.log(isValid(str))
 
+        function repeat(func, times, delay){
+            // let count = times;
+
+            return function(){
+                while(times){
+                    --times;
+                    setTimeout(() => {
+                        func.apply(null, arguments)                        
+                    }, delay);
+                }
+            }
+        }
+    var test = (s) => alert(s)
+    var repeatFn = repeat(test, 3, 1000)
+        repeatFn('asdasdadas')
     </script>
 </body>
 
