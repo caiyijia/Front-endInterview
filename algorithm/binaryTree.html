@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>二叉树</title>
+</head>
+
+<body>
+    <script>
+        function Node(data, left, right) {
+            this.data = data;
+            this.left = left;
+            this.right = right;
+        }
+
+        Node.prototype = {
+            show: function () {
+                console.log(this.data);
+            }
+        }
+
+        function Tree() {
+            this.root = null;
+        }
+
+        Tree.prototype = {
+            // 插入
+            insert: function (data) {
+                var node = new Node(data, null, null);
+                if (!this.root) {
+                    this.root = node;
+                    return;
+                }
+                var current = this.root;
+                var parent = null;
+                while (current) {
+                    parent = current;
+                    if (data < parent.data) {
+                        current = current.left;
+                        if (!current) {
+                            parent.left = node;
+                            return;
+                        }
+                    } else {
+                        current = current.right;
+                        if (!current) {
+                            parent.right = node;
+                            return;
+                        }
+                    }
+
+                }
+            },
+            // 前序遍历
+            preOrder: function (node) {
+                if (node) {
+                    node.show();
+                    this.preOrder(node.left);
+                    this.preOrder(node.right);
+                }
+            },
+            // 中序遍历
+            middleOrder: function (node) {
+                if (node) {
+                    this.middleOrder(node.left);
+                    node.show();
+                    this.middleOrder(node.right);
+                }
+            },
+            // 后序遍历
+            laterOrder: function (node) {
+                if (node) {
+                    this.laterOrder(node.left);
+                    this.laterOrder(node.right);
+                    node.show();
+                }
+            },
+            // 最小值
+            getMin: function () {
+                var current = this.root;
+                while (current) {
+                    if (!current.left) {
+                        return current;
+                    }
+                    current = current.left;
+                }
+            },
+            // 最大值
+            getMax: function () {
+                var current = this.root;
+                while (current) {
+                    if (!current.right) {
+                        return current;
+                    }
+                    current = current.right;
+                }
+            },
+            // 树深度
+            getDeep: function (node, deep) {
+                deep = deep || 0;
+                if (node == null) {
+                    return deep;
+                }
+                deep++;
+                var dleft = this.getDeep(node.left, deep);
+                var dright = this.getDeep(node.right, deep);
+                return Math.max(dleft, dright);
+            },
+            // 树查找
+            getNode: function (data, node) {
+                if (node) {
+                    if (data === node.data) {
+                        return node;
+                    } else if (data < node.data) {
+                        return this.getNode(data, node.left);
+                    } else {
+                        return this.getNode(data, node.right);
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        var t = new Tree();
+        t.insert(3);
+        t.insert(8);
+        t.insert(1);
+        t.insert(2);
+        t.insert(5);
+        t.insert(7);
+        t.insert(6);
+        t.insert(0);
+        console.log(t);
+        // t.middleOrder(t.root);
+        console.log(t.getMin(), t.getMax());
+        console.log(t.getDeep(t.root, 0));
+        console.log(t.getNode(5, t.root));
+    </script>
+</body>
+
+</html>
