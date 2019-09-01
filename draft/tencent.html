@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>腾讯笔试，宝盒和钥匙问题</title>
+</head>
+
+<body>
+    <script>
+        /* 
+        input:
+                2 2
+                1 1
+                1 1
+        output:
+                0
+        */
+
+        let arr2 = [1, 2],
+            arr3 = [2, 1],
+            arr1 = [2, 2];
+        let map = new Map();
+        let i = 0;
+        while (i < arr1[0]) {
+            let box = +arr2[i];
+            for(let j = 0; j < arr1[1]; j++) {
+                let key = +arr3[j];
+                // 盒子不能是开过的 && 钥匙不能是用过的 && 盒子和钥匙的数字和不能是偶数的
+                if (!map.has(i) && map.get(i) !== j && (box + key) % 2 !== 0) {
+                    map.set(i, j)
+                }
+            }
+            ++i;
+        }
+        console.log(map.size)
+    </script>
+</body>
+
+</html>
