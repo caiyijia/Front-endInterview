@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>压缩编码，64进制转换</title>
+</head>
+
+<body>
+    <script>
+        var s = '88833333999';
+        var s1 = '55544'
+
+        function zip(s) {
+            var sArr = s.split('');
+            var obj = {};
+            var res = [...new Set(sArr)];
+            sArr.forEach(e => {
+                obj[e] = obj[e] == undefined ? 1 : obj[e] + 1
+            });
+            var result = res.map(val => val + obj[val]);
+            return result.join('')
+        }
+
+        function string10to64(number) {
+            let chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ-~'.split(''),
+                radix = chars.length,
+                quotient = +number,
+                arr = [],
+                mod = 0;
+            do {
+                mod = quotient % radix;
+                quotient = (quotient - mod) / radix;
+                arr.unshift(chars[mod]);
+            } while (quotient);
+            return arr.join('');
+        }
+
+        function string64to10(number_code) {
+            var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ-~',
+                radix = chars.length,
+                number_code = String(number_code),
+                len = number_code.length,
+                i = 0,
+                origin_number = 0;
+            while (i < len) {
+                origin_number += Math.pow(radix, i++) * chars.indexOf(number_code.charAt(len - i) || 0);
+            }
+            return origin_number;
+        }
+
+        var r1 = string10to64(zip(s1));
+        var r2 = string64to10(r1);
+        console.log(r1)
+        console.log(r2)
+    </script>
+</body>
+
+</html>
