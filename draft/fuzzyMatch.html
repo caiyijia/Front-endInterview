@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>
+    搜索词：<input id="search" type="text">
+  </div>
+  <div>
+    匹配词：<input id='matcher' type="text">
+  </div>
+  匹配率：<span id="result"></span>
+
+  <script>
+    // 忽略大小写
+    function toLowerCase(str) {
+      return str.toLowerCase();
+    }
+
+    // 去除搜索词的空格
+    function shakeSpace(str) {
+      return str.replace(/\s+/g, '');
+    }
+
+    // 匹配率
+    function finalRatio(matchedSize, totalSize, matchedIndex) {
+      // 首位匹配的权重要大于个数的匹配
+      const weight = matchedIndex === 0 ? matchedIndex + 1 / totalSize : matchedIndex;
+      return Number((matchedSize / (totalSize * weight)).toFixed(3));
+    }
+
+    // 计算所有匹配词的匹配率
+    function fuzzyMatchRatio(matchers, str) {
+      if (typeof matchers === 'string') {
+        return calcRatio(matchers, str);
+      }
+      return matchers.map((matcher, i) => {
+        return calcRatio(matcher, str, i);
+      })
+    }
+
+    // 从匹配率中选出最大的作为最终的匹配率
+    function maxRatio(ratioArr) {
+      return Math.max(...ratioArr);
+    }
+
+
+    // 计算单一匹配词的匹配率
+    function calcRatio(matcher, str, index = 1) {
+      matcher = toLowerCase(matcher);
+      str = toLowerCase(str);
+      const matchLen = matcher.length;
+      const strLen = str.length;
+      if (!matchLen || !strLen) return 0; // 任意参数为空字符串
+      
+      let matchedSubStringIndex = matcher.indexOf(str);
+      // 匹配参数包括了完整且连续的输入参数
+      if (matchedSubStringIndex !== -1) {
+        return finalRatio(strLen, matchLen, matchedSubStringIndex);
+      }
+
+      // 如果不能连续匹配，需要将匹配词(拼音)从空格分开，再去一一进行匹配，并计算匹配率
+      str = shakeSpace(str);
+      const wordsBreak = matcher.split(' ');
+      const wordsNum = wordsBreak.length;
+
+      const checkOver1Word = (matchedTimes, wordLen, index, spliceIndex) => {
+        // 先计算此次循环中letter匹配word的匹配率
+        const ratioIn1Word = finalRatio(matchedTimes, wordLen, index);
+        matchedRatio += ratioIn1Word;
+        strBackup.splice(0, spliceIndex);
+      };
+
+      // 备份一份搜索词，如果进行匹配过后，还留有剩余字符，说明没有匹配尽，不符合需求，将ratio置0；
+      let strBackup = [...str];
+      let matchedRatio = 0;
+      for (let j = 0; j < wordsNum; j++) {
+        let nextIndex = 0;
+        let startIndex = -1;
+        let matchedTimes = 0;
+        const word = wordsBreak[j];
+        for (let i = 0; i < strBackup.length; i++) {
+          const subLetter = strBackup[i];
+          let matchedLetterIndex = word.indexOf(subLetter, nextIndex);
+          if (matchedLetterIndex !== -1) {
+            ++matchedTimes;
+            // 匹配到后，需要记录第一次匹配的位置
+            if (startIndex === -1) {
+              startIndex = matchedLetterIndex;
+              nextIndex = matchedLetterIndex;
+            }
+            // 匹配letter的顺序不对也不行
+            if (nextIndex !== matchedLetterIndex) {
+              checkOver1Word(matchedTimes, word.length, startIndex, nextIndex);
+              // 要跳出此次循环
+              break;
+            }
+            // 并调整下次匹配的起始位置。
+            ++nextIndex;
+            if (i === strBackup.length - 1) {
+              // 余下的letter能够匹配完
+              checkOver1Word(matchedTimes, word.length, startIndex, nextIndex);
+            }
+          } else {
+            // 如果在此word中没有匹配到
+            checkOver1Word(matchedTimes, word.length, startIndex, i);
+            // 再跳出此word，进行下个word的匹配率计算
+            break;
+          }
+        }
+      };
+
+      if (strBackup.length) {
+        return 0;
+      }
+
+      return finalRatio(matchedRatio, wordsNum, index);
+    }
+    let searchStr = '';
+    let matcher = '';
+    const $search = document.getElementById('search');
+    const $result = document.getElementById('result');
+    const $matcher = document.getElementById('matcher');
+    const result = () => {
+      if (matcher && searchStr) {
+        $result.innerHTML = fuzzyMatchRatio(matcher, searchStr);
+      }
+    }
+    const typeHandler = e => {
+      searchStr = e.target.value;
+      result();
+    };
+    const matcherHandler = e => {
+      matcher = e.target.value;
+      result();
+    }
+    $search.addEventListener('input', typeHandler);
+    $matcher.addEventListener('input', matcherHandler);
+
+    const subMenus = {
+      '谷歌硬盘': ['谷歌硬盘', 'gu ge ying pan', 'Goodle drive', 'good v', 'drive'],
+    }
+    // eg
+    const matchers = subMenus['谷歌硬盘'];
+    const str1 = 'gdv';
+    const str2 = 'goo';
+    const str3 = 'gdv';
+    const str4 = 'gdri';
+    const str5 = 'griv';
+    const str6 = 'g d';
+    const str7 = 'gu ge';
+    const str8 = 'guge';
+    console.time('matching time');
+    console.log(fuzzyMatchRatio(matchers, str1),
+      fuzzyMatchRatio(matchers, str2),
+      fuzzyMatchRatio(matchers, str3),
+      fuzzyMatchRatio(matchers, str4), fuzzyMatchRatio(matchers, str5),
+      fuzzyMatchRatio(matchers, str6),
+      fuzzyMatchRatio(matchers, str7),
+      fuzzyMatchRatio(matchers, str8))
+    console.timeEnd('matching time');
+
+  </script>
+</body>
+
+</html>
