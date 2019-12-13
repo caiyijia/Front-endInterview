@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div>
+    搜索词：<input id="search" type="text">
+  </div>
+  <div>
+    匹配词：<input id='matcher' type="text">
+  </div>
+  匹配率：<span id="result"></span>
+
+  <pre>
+    - 匹配排序
+    - 整体优先级别：
+      - 精准匹配中「从单个词左边从头匹配的」> 模糊匹配中「从单个词左边从头匹配的」  > 精准匹配中「从头不连续或中间连续或中间不连续」 > 模糊匹配中「从头不连续或中间连续或中间不连续配」 
+      - 匹配度相同的功能，按菜单的功能排序
+    - 步骤1：能匹配上的功能，初始匹配度均为4
+    - 步骤2：
+      - 判定是否属于精准匹配
+        - 属于精准匹配：匹配度为 4
+        - 属于模糊匹配：匹配度为 3
+    - 步骤3：
+      - 判定是从单个词左边从头连续匹配的，还是从头不连续或中间连续或中间不连续配的 （如：比如 Google Drive，输入goo，dri，gd，属于「从单个词左边从头匹配的」，输入oog，则属于「单个词中间匹配的」）
+        - 从单个词左边从头匹配的
+          - 精准匹配：匹配度为 4
+          - 模糊匹配：匹配度为 3
+        - 从头不连续或中间连续或中间不连续配 
+          - 精准匹配：匹配度为 2 + 匹配度（匹配字符 / 匹配词的字符）
+          - 模糊匹配：匹配度为 1 + 匹配度（匹配字符 / 匹配词的字符）
+    - 步骤4：
+      - 匹配度相同的功能，按菜单的功能顺序排序
+
+      
+  </pre>
+
+  <script>
+    const accurateFromStartWithSequence = 4;
+    const fuzzyFromStartWithSequence = 3;
+    const accurateWithoutSequenceOrStart = 2;
+    const fuzzyWithouSequenceOrStart = 1;
+    const noMatch = 0;
+
+    // 忽略大小写
+    function toLowerCase(str) {
+      return str.toLowerCase();
+    }
+
+    // 去除搜索词的空格
+    function shakeSpace(str) {
+      return str.replace(/\s+/g, '');
+    }
+
+    // 匹配率
+    function finalRatio(matchedSize, totalSize, matchedIndex, priority, sequence) {
+      if (priority === 0 && matchedIndex === 0 && sequence) return accurateFromStartWithSequence;
+      if (priority === 1 && matchedIndex === 0 && sequence) return fuzzyFromStartWithSequence;
+      // 从头不连续或中间连续或中间不连续
+      const weight = priority === 0 ? accurateWithoutSequenceOrStart : fuzzyWithouSequenceOrStart;
+      return weight + Number((matchedSize / totalSize).toFixed(3));
+
+    }
+
+    // 计算所有匹配词的匹配率
+    function fuzzyMatchRatio(matchers, str) {
+      if (typeof matchers === 'string') {
+        return [calcRatio(matchers, str)];
+      }
+      return matchers.map((matcher, priority) =>
+        matcher.map(item => calcRatio(item, str, priority))
+      )
+    }
+
+    // 从匹配率中选出最大的作为最终的匹配率
+    function maxRatio(ratioArr) {
+      const all = [].concat.apply([], ratioArr);
+      return Math.max(...all);
+    }
+
+
+    // 计算单一匹配词的匹配率
+    function calcRatio(matchItem, str, priority = 0) {
+      matchItem = shakeSpace(toLowerCase(matchItem));
+      str = shakeSpace(toLowerCase(str));
+      const matchLen = matchItem.length;
+      const strLen = str.length;
+      if (!matchLen || !strLen) return noMatch; // 任意参数为空字符串
+
+      let matchedSubStringIndex = matchItem.indexOf(str);
+      let sequence = true;
+      // 匹配参数包括了完整且连续的输入参数
+      if (matchedSubStringIndex !== -1) {
+        return finalRatio(strLen, matchLen, matchedSubStringIndex, priority, sequence);
+      }
+
+      // 备份一份搜索词，如果进行匹配过后，还留有剩余字符，说明没有匹配尽，不符合需求，将ratio置0；
+      let strBackup = [...str];
+      let nextIndex = 0;
+      let startIndex = -1;
+      let matchedTimes = 0;
+      for (let i = 0; i < str.length; i++) {
+        const subLetter = str[i];
+        let matchedLetterIndex = matchItem.indexOf(subLetter, nextIndex);
+        if (matchedLetterIndex !== -1) {
+          ++matchedTimes;
+          // 匹配到后，需要记录第一次匹配的位置
+          if (startIndex === -1) {
+            startIndex = matchedLetterIndex;
+            nextIndex = matchedLetterIndex;
+          }
+          // 匹配letter的顺序对吗
+          sequence = nextIndex === matchedLetterIndex ? true : false;
+          // 并调整下次匹配的起始位置。
+          ++nextIndex;
+          strBackup.shift();
+        } else {
+          break;
+        }
+      }
+
+      if (strBackup.length) {
+        return noMatch;
+      }
+
+      return finalRatio(strLen, matchLen, startIndex, priority, sequence);
+    }
+    let searchStr = '';
+    let matcher = '';
+    const $search = document.getElementById('search');
+    const $result = document.getElementById('result');
+    const $matcher = document.getElementById('matcher');
+    const result = () => {
+      if (matcher && searchStr) {
+        $result.innerHTML = maxRatio(fuzzyMatchRatio(matcher, searchStr));
+      }
+    }
+
+    function debounce(cb, delay) {
+      let timer = null;
+      return function () {
+        let _this = this;
+        let args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(() => cb.apply(_this, args), delay);
+      }
+    }
+
+    const typeHandler = e => {
+      searchStr = e.target.value;
+      result();
+    };
+    const matcherHandler = e => {
+      matcher = e.target.value;
+      result();
+    }
+    $search.addEventListener('input', debounce(typeHandler, 300));
+    $matcher.addEventListener('input', matcherHandler);
+
+    const subMenus = {
+      '谷歌硬盘': [
+        ['谷歌硬盘', 'gu ge ying pan', 'Google drive'],
+        ['drive', 'file', 'google', '云盘', '谷歌', 'Cloud']
+      ],
+      '百度地图': [
+        ['百度地图', 'baidu map', 'baiduditu'],
+        ['baidu', 'map', 'navigation', '地图', '百度']
+      ],
+    }
+    // eg
+    const matchers = subMenus['谷歌硬盘'];
+    const str1 = 'goo';
+    const str2 = 'dri';
+    const str3 = 'fil';
+    const str4 = 'gog';
+    const str5 = 'guy';
+    const str6 = 'drv';
+    const str7 = 'gu ge';
+    const str8 = 'guge';
+    const sample1 = fuzzyMatchRatio(matchers, str1),
+      sample2 = fuzzyMatchRatio(matchers, str2),
+      sample3 = fuzzyMatchRatio(matchers, str3),
+      sample4 = fuzzyMatchRatio(matchers, str4),
+      sample5 = fuzzyMatchRatio(matchers, str5),
+      sample6 = fuzzyMatchRatio(matchers, str6),
+      sample7 = fuzzyMatchRatio(matchers, str7),
+      sample8 = fuzzyMatchRatio(matchers, str8)
+    console.time('matching time');
+    console.log(
+      maxRatio(sample1), // 4
+      maxRatio(sample2), // 3
+      maxRatio(sample3), // 3
+      maxRatio(sample4), // 2.273
+      maxRatio(sample5), // 2.273
+      maxRatio(sample6), // 2.273
+      maxRatio(sample7), // 4
+      maxRatio(sample8), // 4
+      )
+    console.timeEnd('matching time'); // 0.255126953125ms
+  </script>
+</body>
+
+</html>
