@@ -38,7 +38,10 @@
     - 步骤4：
       - 匹配度相同的功能，按菜单的功能顺序排序
 
-      
+      eg:
+      搜索词: goo
+      匹配词: google drive
+      匹配率: 4
   </pre>
 
   <script>
@@ -65,7 +68,6 @@
       // 从头不连续或中间连续或中间不连续
       const weight = priority === 0 ? accurateWithoutSequenceOrStart : fuzzyWithouSequenceOrStart;
       return weight + Number((matchedSize / totalSize).toFixed(3));
-
     }
 
     // 计算所有匹配词的匹配率
@@ -83,7 +85,6 @@
       const all = [].concat.apply([], ratioArr);
       return Math.max(...all);
     }
-
 
     // 计算单一匹配词的匹配率
     function calcRatio(matchItem, str, priority = 0) {
@@ -131,6 +132,7 @@
 
       return finalRatio(strLen, matchLen, startIndex, priority, sequence);
     }
+
     let searchStr = '';
     let matcher = '';
     const $search = document.getElementById('search');
@@ -201,7 +203,7 @@
       maxRatio(sample6), // 2.273
       maxRatio(sample7), // 4
       maxRatio(sample8), // 4
-      )
+    )
     console.timeEnd('matching time'); // 0.255126953125ms
   </script>
 </body>
