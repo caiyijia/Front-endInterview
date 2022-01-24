@@ -1,0 +1,23 @@
+{
+  "name": "practice-draft",
+  "version": "1.0.0",
+  "description": "记录自己踩过的坑",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caiyijia/Front-endInterview.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/caiyijia/Front-endInterview/issues"
+  },
+  "homepage": "https://github.com/caiyijia/Front-endInterview#readme",
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
+  }
+}
