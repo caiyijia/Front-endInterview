@@ -92,3 +92,10 @@ class LFUCache {
  */
 
 new LFUCache(0);
+
+import { output } from './460-test-output';
+import { input1, input2 } from './460-test-input';
+
+console.log(input1);
+console.log(input2);
+console.log(output);
