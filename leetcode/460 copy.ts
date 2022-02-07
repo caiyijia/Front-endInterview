@@ -1,10 +1,13 @@
 let index = 0;
+let lock = false;
+
 class LFUCache {
     public max: number;
     public min: number;
     public val_times: Map<number, [number, number]>;
     public times_set: Map<number, Set<number>>;
     constructor(capacity: number) {
+        console.log(`capacity ${capacity}`);
         this.max = capacity
         this.min = 0
         this.val_times = new Map()
@@ -28,8 +31,9 @@ class LFUCache {
             this.update(key)
         } else {
             if (this.max === this.val_times.size) {
+                // 要避免 0 || -1 的 case
                 let minSet = this.times_set.get(this.min) || new Set()
-                let minKey = minSet.keys().next().value || -1
+                let minKey = minSet.keys().next().value ?? -1
                 this.val_times.delete(minKey)
                 minSet.delete(minKey)
             }
@@ -100,7 +104,8 @@ for (let i = 0; i < output.length; i++) {
         res = lfu[method].apply(lfu, val);
     }
 
-    if (res != expect) {
+    if (res != expect && !lock) {
+        lock = true;
         console.error('error case: ' + i + ` ${method} ${val} ` + 'expect result is ' + expect + ' but is ' + res);
     }
 }
